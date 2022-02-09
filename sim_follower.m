@@ -8,13 +8,19 @@ v_follower = zeros(sim_steps,1);
 p_follower(1) = 0;
 v_follower(1) = v0;
 
+
 for i=2:sim_steps
     
-    s = p_leader(i-1) - p_follower(i-1);
+    s = p_leader(i-1) - p_follower(i-1);    
+    
     v = v_follower(i-1);
     dv = v_leader(i-1) - v_follower(i-1);
     
     dv_dt = accel_controller(s,v,dv);
+    %Clipping:
+    dv_dt = max([-3,dv_dt]); %Max braking
+    dv_dt = min([1.5,dv_dt]); %Max accel
+    
     dp_dt = v_follower(i-1);
     
     p_follower(i) = p_follower(i-1) + dp_dt*dt;
